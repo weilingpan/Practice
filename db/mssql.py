@@ -1,4 +1,6 @@
 import pymssql
+from contextlib import contextmanager
+
 import utils
 
 class MSSQLBase:
@@ -52,7 +54,8 @@ class MSSQLBase:
         if self.conn:
             self.conn.close()
 
-
+# DONE: contextlib，使用@contextmanager
+# TODO: 考慮使用連接池
 class MSSQLBaseSingleton:
     _instance = None
 
@@ -72,38 +75,39 @@ class MSSQLBaseSingleton:
         self.conn = None
         self.cursor = None
 
+
+    @contextmanager
     def connect(self):
-        self.conn = pymssql.connect(server=self.server, database=self.database, user=self.username, password=self.password)
-        self.cursor = self.conn.cursor()
+        conn = pymssql.connect(server=self.server, database=self.database, user=self.username, password=self.password)
+        cursor = conn.cursor()
+        try:
+            yield cursor
+            conn.commit()
+        finally:
+            cursor.close()
+            conn.close()
 
     def query(self, query:str):
-        self.connect()
-        self.cursor.execute(query)
-        result = self.cursor.fetchall()
-        self.close()
+        with self.connect() as cursor:
+            cursor.execute(query)
+            result = cursor.fetchall()
         return result
 
     def insert(self, table:str, columns:list, values:tuple):
-        self.connect()
         placeholders = ', '.join(['%s'] * len(values))
         sql = f"INSERT INTO {table} ({', '.join(columns)}) VALUES ({placeholders})"
-        self.cursor.execute(sql, values)
-        self.conn.commit()
-        self.close()
+        with self.connect() as cursor:
+            cursor.execute(sql, values)
 
     def insert_by_df(self, df, table:str):
-        self.connect()
         sql = self.dataframe_to_sql_insert(df, table)
-        self.cursor.execute(sql)
-        self.conn.commit()
-        self.close()
+        with self.connect() as cursor:
+            cursor.execute(sql)
 
     def delete(self, table:str, condition:str):
-        self.connect()
         query = f"DELETE FROM {table} WHERE {condition}"
-        self.cursor.execute(query)
-        self.conn.commit()
-        self.close()
+        with self.connect() as cursor:
+            cursor.execute(query)
 
     def dataframe_to_sql_insert(self, df, table:str) -> str:
         column_names = ", ".join(df.columns)
@@ -115,9 +119,3 @@ class MSSQLBaseSingleton:
 
         sql = f"INSERT INTO {table} ({column_names}) VALUES {', '.join(rows)};"
         return sql
-    
-    def close(self):
-        if self.cursor:
-            self.cursor.close()
-        if self.conn:
-            self.conn.close()
