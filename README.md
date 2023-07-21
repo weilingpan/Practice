@@ -1,4 +1,9 @@
-# 目的
+# 目錄
+- [專案目的](#專案目的)
+- [專案架構](#專案架構)
+- [Quickstart](#quickstart)
+
+## 專案目的
 
 Multiple services that would like to access data with RESTful API.
 
@@ -16,7 +21,7 @@ Multiple services that would like to access data with RESTful API.
 - README.md
 - utils.py 一些小功能
 
-## 環境
+## Quickstart
 
 1. 建立虛擬環境 conda env create -f environment.yml
 2. 進入虛擬環境 conda activate pegatron
