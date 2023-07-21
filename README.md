@@ -24,11 +24,12 @@ Multiple services that would like to access data with RESTful API.
 
 ## Quickstart
 
-1. 建立虛擬環境 conda env create -f environment.yml
-2. 進入虛擬環境 conda activate pegatron
-3. 進入專案目錄 cd hw_pegatron
-3. 啟動FastAPI服務 uvicorn main:app --reload
-4. 在瀏覽器中打開 http://localhost:8000/docs 可以看到 API 文件
+0. git clone https://github.com/weilingpan/Practice.git
+0. 進入專案目錄 cd practice
+0. 建立虛擬環境 conda env create -f environment.yml
+0. 進入虛擬環境 conda activate pegatron
+0. 啟動FastAPI服務 uvicorn main:app --reload
+0. 在瀏覽器中打開 http://localhost:8000/docs 可以看到 API 文件
 
 ## API測試
 
