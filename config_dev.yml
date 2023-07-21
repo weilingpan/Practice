@@ -1,0 +1,8 @@
+api_name: 'ReginaAPI'
+api_description: 'regina api description'
+db:
+  server: localhost
+  port: 1443
+  db_name: 'db_pegatroncorp'
+  user: 'user_pegatroncorp'
+  pwd: 'pwd@pegatroncorp'
