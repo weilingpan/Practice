@@ -77,10 +77,44 @@ class MSSQLBaseSingleton:
         self.cursor = self.conn.cursor()
 
     def query(self, query:str):
+        self.connect()
         self.cursor.execute(query)
         result = self.cursor.fetchall()
-        #self.close()
+        self.close()
         return result
+
+    def insert(self, table:str, columns:list, values:tuple):
+        self.connect()
+        placeholders = ', '.join(['%s'] * len(values))
+        sql = f"INSERT INTO {table} ({', '.join(columns)}) VALUES ({placeholders})"
+        self.cursor.execute(sql, values)
+        self.conn.commit()
+        self.close()
+
+    def insert_by_df(self, df, table:str):
+        self.connect()
+        sql = self.dataframe_to_sql_insert(df, table)
+        self.cursor.execute(sql)
+        self.conn.commit()
+        self.close()
+
+    def delete(self, table:str, condition:str):
+        self.connect()
+        query = f"DELETE FROM {table} WHERE {condition}"
+        self.cursor.execute(query)
+        self.conn.commit()
+        self.close()
+
+    def dataframe_to_sql_insert(self, df, table:str) -> str:
+        column_names = ", ".join(df.columns)
+        rows = []
+
+        for _, row in df.iterrows():
+            values = ", ".join([f"'{value}'" if isinstance(value, str) else str(value) for value in row.values])
+            rows.append(f"({values})")
+
+        sql = f"INSERT INTO {table} ({column_names}) VALUES {', '.join(rows)};"
+        return sql
     
     def close(self):
         if self.cursor:
