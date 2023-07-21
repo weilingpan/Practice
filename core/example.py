@@ -9,6 +9,7 @@ import pandas as pd
 #     name: str
 #     age: int
 
+# TODO: 把 domain 拉出來
 class MyReesponse(BaseModel):
     status_code: int
     message: dict
