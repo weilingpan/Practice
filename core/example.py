@@ -19,7 +19,7 @@ def get_users() -> MyReesponse:
     sql = 'select * from backend_users'
     results = db.query(sql)
     if len(results) == 0:
-        return MyReesponse(status_code=204, message={'detail': 'No accounts'})
+        return MyReesponse(status_code=204, message={'detail': 'No accounts','data': {}})
     return MyReesponse(status_code=200, message={'data': [{'name': name, 'age': age} for name, age in results]})
 
 def get_group_avg_age() -> MyReesponse:
@@ -29,7 +29,7 @@ def get_group_avg_age() -> MyReesponse:
     results = db.query(sql)
 
     if len(results) == 0:
-        return MyReesponse(status_code=204, message={'detail': 'No accounts'})
+        return MyReesponse(status_code=204, message={'detail': 'No accounts','data': {}})
     
     df = pd.DataFrame(results, columns=['Name', 'Age'])
     df_avg_result = df.groupby(df['Name'].str[0]).agg(avg_age=('Age', 'mean'))
