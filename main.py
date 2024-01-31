@@ -4,7 +4,7 @@ from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 
-from routers import demo, router1
+from routers import demo, user
 import utils
 
 settings = utils.get_settings()
@@ -19,9 +19,9 @@ app.include_router(
 )
 
 app.include_router(
-    router1.router,
-    prefix="/router1",
-    tags=["router1"],
+    user.router,
+    prefix="/user",
+    tags=["user"],
 )
 
 
